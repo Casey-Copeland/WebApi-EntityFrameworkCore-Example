@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  webapi-entityframeworkcore-example:
+    image: ${DOCKER_REGISTRY-}webapientityframeworkcoreexample
+    build:
+      context: .
+      dockerfile: src/Dockerfile

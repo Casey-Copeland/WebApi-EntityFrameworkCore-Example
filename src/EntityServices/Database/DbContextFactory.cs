@@ -7,11 +7,11 @@ namespace WebApi_EntityFrameworkCore_Example.EntityServices.Database
         TDbContext CreateDbContext();
     }
 
-    public class DbContextFactory<TDbContext> : IDbContextFactory<TDbContext> where TDbContext : DbContext
+    public class DbContextFactory<TDbContext> : IDbContextFactory<TDbContext> where TDbContext : DbContext, new()
     {
         public TDbContext CreateDbContext()
         {
-            throw new System.NotImplementedException();
+            return new TDbContext();
         }
     }
 }

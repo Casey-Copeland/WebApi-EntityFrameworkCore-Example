@@ -1,0 +1,38 @@
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  tag: '$(Build.BuildId)'
+
+stages:
+- stage: Build
+  displayName: Build image
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Docker@2
+      condition: eq(variables['Build.Reason'], 'PullRequest')
+      displayName: Build an image
+      inputs:
+        repository: 'WebApi-EntityFrameworkCore-Example'
+        command: 'build'
+        dockerfile: '**/Dockerfile'
+        tags: |
+          $(tag)
+    - task: Docker@2
+      condition: eq(variables['Build.SourceBranch'], 'origin/master')
+      displayName: Build an image
+      inputs:
+        containerRegistry: 'CopelandTech-Docker-Registry'
+        repository: 'WebApi-EntityFrameworkCore-Example'
+        command: 'buildAndPush'
+        dockerfile: '**/Dockerfile'
+        tags: |
+          $(tag)
+          latest

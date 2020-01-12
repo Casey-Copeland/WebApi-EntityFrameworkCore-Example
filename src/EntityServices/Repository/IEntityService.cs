@@ -7,7 +7,7 @@ namespace WebApi_EntityFrameworkCore_Example.EntityServices.Repository
 {
     public interface IEntityService<TEntity> where TEntity : class, IEntity
     {
-        IQueryable<TEntity> GetAll();
+        IQueryable<TEntity> GetAsQueryable();
 
         Task<TEntity> GetByGuid(Guid guid);
 

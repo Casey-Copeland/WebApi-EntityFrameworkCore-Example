@@ -5,9 +5,9 @@ namespace WebApi_EntityFrameworkCore_Example.UnitTests.Entities
 {
     public class UnitTestEntity : IDbEntity
     {
-        public int Id { get; }
-        public DateTime? DateCreated { get; }
-        public DateTime? DateModified { get; }
-        public Guid Guid { get; }
+        public int Id { get; set; }
+        public DateTime? DateCreated { get; set; }
+        public DateTime? DateModified { get; set; }
+        public Guid Guid { get; set; }
     }
 }

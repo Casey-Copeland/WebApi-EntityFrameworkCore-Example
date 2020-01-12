@@ -1,35 +1,50 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApi_EntityFrameworkCore_Example.EntityServices.Database;
 using WebApi_EntityFrameworkCore_Example.EntityServices.Entities;
 
 namespace WebApi_EntityFrameworkCore_Example.EntityServices.Repository
 {
     public class DbEntityService<TEntity> : IEntityService<TEntity> where TEntity : class, IDbEntity
     {
-        public Task Create(TEntity entity)
+        private readonly DbContext _dbContext;
+        private readonly DbSet<TEntity> _dbSet;
+
+        public DbEntityService(IDbContextFactory<ExampleDbContext> dbContextFactory)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContextFactory.CreateDbContext();
+            _dbSet = _dbContext.Set<TEntity>();
         }
 
-        public Task Delete(Guid guid)
+        public async Task Create(TEntity entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Add(entity);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public IQueryable<TEntity> GetAll()
+        public async Task Delete(Guid guid)
         {
-            throw new NotImplementedException();
+            var entity = await GetByGuid(guid);
+            _dbSet.Remove(entity);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public Task<TEntity> GetByGuid(Guid guid)
+        public IQueryable<TEntity> GetAsQueryable()
         {
-            throw new NotImplementedException();
+            return _dbSet.AsNoTracking(); //Returning with AsNoTracking as entity updates should always be done by CRUD operations directly and this gives significant performance improvements in readonly scenarios
         }
 
-        public Task Update(Guid guid, TEntity entity)
+        public async Task<TEntity> GetByGuid(Guid guid)
         {
-            throw new NotImplementedException();
+            return await GetAsQueryable().FirstOrDefaultAsync(e => e.Guid == guid);
+        }
+
+        public async Task Update(Guid guid, TEntity entity)
+        {
+            _dbSet.Update(entity);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
